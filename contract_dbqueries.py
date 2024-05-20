@@ -1,4 +1,3 @@
-#import mysql.connector
 import mysql.connector
 import dbcredentials
 

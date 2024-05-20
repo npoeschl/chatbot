@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 #Get all contracts (that are still active)
 def checkDates():
     contracts= contract_dbqueries.getAllActiveContracts()
-    print(contracts)
+    #print(contracts)
     now =  datetime.now().date()
 
     for c in contracts:

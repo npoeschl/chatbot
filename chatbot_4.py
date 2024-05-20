@@ -12,6 +12,7 @@ Send /start to initiate the conversation.
 Press Ctrl-C on the command line to stop the bot.
 """
 #import logging
+from flask import Flask, request
 from datetime import datetime, time
 from dateutil.relativedelta import relativedelta
 import contract_dbqueries
@@ -45,6 +46,8 @@ from telegram.ext import (
 #    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 #)
 #logger = logging.getLogger(__name__)
+
+app = Flask(__name__)
 
 # Stages
 START, STARTALERTS, CHOOSE, CATEGORY, TYPE, CONTRACT, DETAILS, NEWCONTRACT, SETCATEGORY, SETRENEWALPERIOD, SETTYPE, SETBENEFICIARY, SETPERIOD, SETCONTRACTOR, SETSTARTDATE, SETENDDATE, SETNOTICEPERIOD, SETFEE, SETACCOUNT, SAVECONTRACT, REALLYDELETE, NEWCATEGORY, NEWTYPE = range(23)
@@ -248,7 +251,7 @@ async def savetype(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     message = update.message
     newType = contract_dbqueries.newType(context.user_data["category"], message.text)
     context.user_data["type"] = newType[0]
-    logger.info("New Type saved: " +str(newType) +" - "+message.text)
+    #logger.info("New Type saved: " +str(newType) +" - "+message.text)
     keyboard = []
     beneficiaries = []
     beneficiaries = contract_dbqueries.getBeneficiaries()
@@ -525,7 +528,7 @@ async def sendAlert(context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 
-
+@app.route('/5639687161:AAFg8NO8kOcHQmFODEKA8SZSshQv4fiqQHg', methods=['POST'])
 def chatbot() -> None:
     """Run the bot."""
     # Create the Application and pass it your bot's token.
@@ -625,4 +628,4 @@ def chatbot() -> None:
 
 
 if __name__ == "__main__":
-    chatbot()
+    app.run(threaded=True)
