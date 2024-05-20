@@ -1,3 +1,5 @@
-Flask==3.0.3
-gunicorn==22.0.0
-Werkzeug==3.0.3
+praw==7.5.0
+python-telegram-bot==21.1.1
+python_dateutil==2.8.2
+Requests==2.31.0
+mysql-connector-python==8.4.0
