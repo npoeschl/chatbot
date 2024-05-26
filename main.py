@@ -1,18 +1,6 @@
 
-"""Simple inline keyboard bot with multiple CallbackQueryHandlers.
-
-This Bot uses the Application class to handle the bot.
-First, a few callback functions are defined as callback query handler. Then, those functions are
-passed to the Application and registered at their respective places.
-Then, the bot is started and runs until we press Ctrl-C on the command line.
-Usage:
-Example of a bot that uses inline keyboard that has multiple CallbackQueryHandlers arranged in a
-ConversationHandler.
-Send /start to initiate the conversation.
-Press Ctrl-C on the command line to stop the bot.
-"""
 #import logging
-from flask import Flask, request
+#from flask import Flask, request
 from datetime import datetime, time
 from dateutil.relativedelta import relativedelta
 import contract_dbqueries
@@ -47,7 +35,7 @@ from telegram.ext import (
 #)
 #logger = logging.getLogger(__name__)
 
-app = Flask(__name__)
+#app = Flask(__name__)
 
 # Stages
 START, STARTALERTS, CHOOSE, CATEGORY, TYPE, CONTRACT, DETAILS, NEWCONTRACT, SETCATEGORY, SETRENEWALPERIOD, SETTYPE, SETBENEFICIARY, SETPERIOD, SETCONTRACTOR, SETSTARTDATE, SETENDDATE, SETNOTICEPERIOD, SETFEE, SETACCOUNT, SAVECONTRACT, REALLYDELETE, NEWCATEGORY, NEWTYPE = range(23)
@@ -73,7 +61,7 @@ async def startAlerts(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    print(str(update.message.from_user.id))
+    #print(str(update.message.from_user.id))
     if (update.message.from_user.id == 948082610 or update.message.from_user.id == 59334688):
         keyboard = []
         keyboard.append([InlineKeyboardButton("Vertrag anlegen", callback_data="newcontract"), InlineKeyboardButton("Vertrag anzeigen/bearbeiten", callback_data="showcontract")])
@@ -100,7 +88,7 @@ async def newcontract(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
             if (cid == categoryCount-1):
                 keyboard.append([InlineKeyboardButton(categories[cid][1], callback_data=categories[cid][0])])
             else:
-                logger.info("at category ID: " +str(cid))
+               # logger.info("at category ID: " +str(cid))
                 keyboard.append([InlineKeyboardButton(categories[cid][1], callback_data=categories[cid][0]), InlineKeyboardButton(categories[cid+1][1], callback_data=categories[cid+1][0])])
     
     keyboard.append([InlineKeyboardButton("Neue Kategorie anlegen", callback_data="new_category")])
@@ -240,7 +228,7 @@ async def savecategory(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     message = update.message
     newCategory = contract_dbqueries.newCategory(message.text)
     context.user_data["category"] = newCategory[0]
-    logger.info("New Category saved: " +str(newCategory[0]) +" - "+message.text)
+    #logger.info("New Category saved: " +str(newCategory[0]) +" - "+message.text)
     await update.message.reply_text(
         text="Alles klar! Die Kategorie \"" + message.text + "\" wurde angelegt. Welche Vertragsart möchtest du zur neuen Kategorie anlegen?"
     )
@@ -443,13 +431,13 @@ async def contract(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     reply_markup = InlineKeyboardMarkup(keyboard)
     await query.edit_message_text(
         text="Folgende Infos gibt es zum Vertrag:\n"
-                                            +"\n *Typ:* "+str(contract[5])+"\n"
-                                            +"\n *Kosten:* "+str(contract[1])+"€"+"\n"
-                                            +"\n *Für:* "+str(contract[2])+"\n"
-                                            +"\n *Anbieter:* "+str(contract[4])+"\n"
-                                            +"\n *Zahlung:* "+str(contract[3])+"\n"
-                                            +"\n *Kündigung bis:* "+str(contract[7])+" (noch "+daystocancel+" Tage!)"+"\n"
-                                            +"\n *Konto:* "+str(contract[6]), reply_markup=reply_markup, parse_mode= 'Markdown'
+            +"\n *Typ:* "+str(contract[5])+"\n"
+            +"\n *Kosten:* "+str(contract[1])+"€"+"\n"
+            +"\n *Für:* "+str(contract[2])+"\n"
+            +"\n *Anbieter:* "+str(contract[4])+"\n"
+            +"\n *Zahlung:* "+str(contract[3])+"\n"
+            +"\n *Kündigung bis:* "+str(contract[7])+" (noch "+daystocancel+" Tage!)"+"\n"
+            +"\n *Konto:* "+str(contract[6]), reply_markup=reply_markup, parse_mode= 'Markdown'
     )
     return DETAILS
 
@@ -460,7 +448,7 @@ async def deleteContract(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     answer = query.data
     keyboard = []
     id = answer[answer.find('-')+1:]
-    print(id)
+    #print(id)
     keyboard.append([InlineKeyboardButton("Ja, löschen!", callback_data=id)])
         
     reply_markup = InlineKeyboardMarkup(keyboard)
@@ -528,7 +516,7 @@ async def sendAlert(context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 
-@app.route('/5639687161:AAFg8NO8kOcHQmFODEKA8SZSshQv4fiqQHg', methods=['POST'])
+#@app.route('/5639687161:AAFg8NO8kOcHQmFODEKA8SZSshQv4fiqQHg', methods=['POST'])
 def chatbot() -> None:
     """Run the bot."""
     # Create the Application and pass it your bot's token.
@@ -628,4 +616,4 @@ def chatbot() -> None:
 
 
 if __name__ == "__main__":
-    app.run(threaded=True)
+    chatbot()
