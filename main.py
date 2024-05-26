@@ -1,6 +1,6 @@
 
 #import logging
-#from flask import Flask, request
+from flask import Flask, request
 from datetime import datetime, time
 from dateutil.relativedelta import relativedelta
 import contract_dbqueries
@@ -35,7 +35,7 @@ from telegram.ext import (
 #)
 #logger = logging.getLogger(__name__)
 
-#app = Flask(__name__)
+app = Flask(__name__)
 
 # Stages
 START, STARTALERTS, CHOOSE, CATEGORY, TYPE, CONTRACT, DETAILS, NEWCONTRACT, SETCATEGORY, SETRENEWALPERIOD, SETTYPE, SETBENEFICIARY, SETPERIOD, SETCONTRACTOR, SETSTARTDATE, SETENDDATE, SETNOTICEPERIOD, SETFEE, SETACCOUNT, SAVECONTRACT, REALLYDELETE, NEWCATEGORY, NEWTYPE = range(23)
@@ -516,7 +516,7 @@ async def sendAlert(context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 
-#@app.route('/5639687161:AAFg8NO8kOcHQmFODEKA8SZSshQv4fiqQHg', methods=['POST'])
+@app.route("/")
 def chatbot() -> None:
     """Run the bot."""
     # Create the Application and pass it your bot's token.
