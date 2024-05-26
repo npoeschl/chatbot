@@ -67,7 +67,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         keyboard.append([InlineKeyboardButton("Vertrag anlegen", callback_data="newcontract"), InlineKeyboardButton("Vertrag anzeigen/bearbeiten", callback_data="showcontract")])
         keyboard.append([InlineKeyboardButton("Erinnerungen ein-/ausschalten", callback_data="alerts")])
         reply_markup = InlineKeyboardMarkup(keyboard)
-        await update.message.reply_text("Ich bin dein Vertrags-Knecht. Was kann ich für dich tun?", reply_markup=reply_markup)
+        await update.message.reply_text("Ich bin dein Vertrags-Knecht in der Cloud. Was kann ich für dich tun?", reply_markup=reply_markup)
         return CHOOSE
     else:
         await update.message.reply_text(
