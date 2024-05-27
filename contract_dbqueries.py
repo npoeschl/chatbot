@@ -20,7 +20,7 @@ def isValidUser(userId):
     
     # Instantiate Cursor
     cur = conn.cursor()
-    cur.execute("SELECT 1 FROM users WHERE user_id = '"+userId+"'")
+    cur.execute("SELECT 1 FROM users WHERE user_id = '"+str(userId)+"'")
     result = cur.fetchall()
     conn.close()
     return result
