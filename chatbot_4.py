@@ -160,7 +160,7 @@ async def showcontract(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     categories = []
     categories = contract_dbqueries.getActiveContractCategories()
     for c in categories:
-        keyboard.append([InlineKeyboardButton(c[1], callback_data=c[0])])
+        keyboard.append([InlineKeyboardButton(c[0], callback_data=c[0])])
     
     reply_markup = InlineKeyboardMarkup(keyboard)
     # Send message with text and appended InlineKeyboard
