@@ -158,7 +158,7 @@ async def showcontract(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     # a list (hence `[[...]]`).
     keyboard = []
     categories = []
-    categories = contract_dbqueries.getContractCategories()
+    categories = contract_dbqueries.getActiveContractCategories()
     for c in categories:
         keyboard.append([InlineKeyboardButton(c[1], callback_data=c[0])])
     

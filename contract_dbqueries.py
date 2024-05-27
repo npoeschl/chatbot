@@ -55,6 +55,16 @@ def deleteContractById(Id):
         print(f"Error while trying to delete: {e}")
     conn.close()    
 
+def getActiveContractCategories():
+    conn = getConnection()
+    
+    # Instantiate Cursor
+    cur = conn.cursor()
+    cur.execute("SELECT DISTINCT contract_categories.contract_category FROM contracts JOIN contract_types ON contracts.contract_type = contract_types.contract_type_id JOIN contract_categories ON contract_types.contract_category = contract_categories.contract_category_id WHERE contracts.is_active = 1")
+    result = cur.fetchall()
+    conn.close()
+    return result
+
 def getContractCategories():
     conn = getConnection()
     
