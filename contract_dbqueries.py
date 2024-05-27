@@ -15,6 +15,16 @@ def getConnection():
 
    return conn
 
+def isValidUser(userId):
+    conn = getConnection()
+    
+    # Instantiate Cursor
+    cur = conn.cursor()
+    cur.execute("SELECT 1 FROM users WHERE user_id = '"+userId+"'")
+    result = cur.fetchall()
+    conn.close()
+    return result
+
 def getAllActiveContracts():
     conn = getConnection()
     
