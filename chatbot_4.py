@@ -416,6 +416,7 @@ async def savecontract(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     enddate = datetime.strptime(context.user_data["enddate"], '%Y-%m-%d').date()
     nextcanceldate = enddate - relativedelta(months=+int(context.user_data["noticeperiod"])) 
     context.user_data["nextcancellationdate"] = nextcanceldate
+    context.user_data["userid"] = update.message.from_user.id
     contract_dbqueries.saveContract(context.user_data)
     await update.message.reply_text(
         text="Danke, ich lege den Vertrag an. Mach's gut!"
