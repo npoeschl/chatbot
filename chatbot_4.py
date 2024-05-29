@@ -555,8 +555,9 @@ def main() -> None:
                 CallbackQueryHandler(startAlerts, pattern="^alerts$")
             ],
             CATEGORY: [
-                CallbackQueryHandler(category, pattern="^.+$"),
-                CallbackQueryHandler(startover, pattern="^back$")
+                CallbackQueryHandler(startover, pattern="^back$"),
+                CallbackQueryHandler(category, pattern="^.+$")
+                
             ],
             SETCATEGORY: [
                 CallbackQueryHandler(newcategory, pattern="^new_category$"),
