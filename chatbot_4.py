@@ -152,20 +152,14 @@ async def showcontract(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     """Nutzer soll die Vertrags Kategorie wählen"""
     query = update.callback_query
     await query.answer()
-    # Build InlineKeyboard where each button has a displayed text
-    # and a string as callback_data
-    # The keyboard is a list of button rows, where each row is in turn
-    # a list (hence `[[...]]`).
     keyboard = []
     categories = []
     categories = contract_dbqueries.getActiveContractCategories()
     for c in categories:
         keyboard.append([InlineKeyboardButton(c[1], callback_data=c[0])])
-    
+    keyboard.append([InlineKeyboardButton("zurück", callback_data="back")])
     reply_markup = InlineKeyboardMarkup(keyboard)
-    # Send message with text and appended InlineKeyboard
     await query.edit_message_text("Ich kann dich über deine laufenden Verträge informieren. Folgende Kategorien von Verträgen gibt es:", reply_markup=reply_markup)
-    # Tell ConversationHandler that we're in state `FIRST` now
     return CATEGORY
 
 async def startover(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -175,7 +169,7 @@ async def startover(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     await query.answer()
     keyboard = []
     categories = []
-    categories = contract_dbqueries.getContractCategories()
+    categories = contract_dbqueries.getActiveContractCategories()
     for c in categories:
         keyboard.append([InlineKeyboardButton(c[1], callback_data=c[0])])
     
@@ -561,7 +555,8 @@ def main() -> None:
                 CallbackQueryHandler(startAlerts, pattern="^alerts$")
             ],
             CATEGORY: [
-                CallbackQueryHandler(category, pattern="^.+$")  
+                CallbackQueryHandler(category, pattern="^.+$"),
+                CallbackQueryHandler(startover, pattern="^back$")
             ],
             SETCATEGORY: [
                 CallbackQueryHandler(newcategory, pattern="^new_category$"),
