@@ -1,16 +1,15 @@
 import mysql.connector
 import dbcredentials
 
-def queryWrapper(*args, **kwargs):
-    def inner(func):
+def queryWrapper(func):
+    def inner(*args,**kwargs):
         global conn
         global cur
         conn = getConnection()
         cur = getSQLCursor(conn)
-        func(kwargs['param'])
-        conn.close()
-    return inner
-   
+        return func(*args,**kwargs)
+    return inner 
+      
 
 def getConnection():
     try:
@@ -30,7 +29,7 @@ def getSQLCursor(conn):
     cur = conn.cursor()
     return cur
 
-@queryWrapper(param = "userId")
+@queryWrapper
 def isValidUser(userId):
     cur.execute("SELECT 1 FROM users WHERE user_id = '"+str(userId)+"'")
     result = cur.fetchall()
