@@ -37,7 +37,7 @@ def isValidUser(userId):
 
 @queryWrapper
 def getAllActiveContracts():
-    cur.execute("SELECT contract_id, contract_start, contract_end, contract_next_cancellation_date, notice_period_months, contract_renewal_period_months" +
+    cur.execute("SELECT contract_id, contract_start, contract_end, contract_next_cancellation_date, notice_period_months, contract_renewal_period_months " +
                  "FROM contracts WHERE is_active = 1")
     result = cur.fetchall()
     return result
@@ -51,8 +51,8 @@ def deleteContractById(Id):
 
 @queryWrapper
 def getActiveContractCategories():
-    cur.execute("SELECT DISTINCT contract_categories.contract_category" + 
-                "FROM contracts JOIN contract_types ON contracts.contract_type = contract_types.contract_type_id" + 
+    cur.execute("SELECT DISTINCT contract_categories.contract_category " + 
+                "FROM contracts JOIN contract_types ON contracts.contract_type = contract_types.contract_type_id " + 
                 "JOIN contract_categories ON contract_types.contract_category = contract_categories.contract_category_id WHERE contracts.is_active = 1")
     result = cur.fetchall()
     return result
@@ -65,22 +65,22 @@ def getContractCategories():
 
 @queryWrapper
 def getContractTypes(category):
-    cur.execute("SELECT contract_types.contract_type_id, contract_types.contract_type FROM contract_types" + 
-                "JOIN contract_categories ON contract_types.contract_category = contract_categories.contract_category_id" + 
+    cur.execute("SELECT contract_types.contract_type_id, contract_types.contract_type FROM contract_types " + 
+                "JOIN contract_categories ON contract_types.contract_category = contract_categories.contract_category_id " + 
                 "WHERE contract_categories.contract_category_id = '"+category+"'")
     result = cur.fetchall()
     return result
 
 @queryWrapper
 def getAllContracts():
-    cur.execute("SELECT * FROM contracts JOIN contract_types ON contracts.contract_type = contract_types.contract_type_id" + 
+    cur.execute("SELECT * FROM contracts JOIN contract_types ON contracts.contract_type = contract_types.contract_type_id " + 
                 "JOIN contractors ON contractors.contractor_id = contracts.contractor")
     result = cur.fetchall()
     return result
 
 @queryWrapper
 def getContracts(type):
-    cur.execute("SELECT * FROM contracts JOIN contract_types ON contracts.contract_type = contract_types.contract_type_id" + 
+    cur.execute("SELECT * FROM contracts JOIN contract_types ON contracts.contract_type = contract_types.contract_type_id " + 
                 "JOIN contractors ON contractors.contractor_id = contracts.contractor WHERE contract_types.contract_type_id = '"+type+"'")
     result = cur.fetchall()
     return result
@@ -112,10 +112,10 @@ def getAccounts():
 @queryWrapper
 def getContractById(id):
     cur.execute("SELECT contract_id, contract_fee, name, period_name, contractor_name, contract_types.contract_type, bankaccounts.account_IBAN," + 
-                "contract_next_cancellation_date FROM contracts JOIN contract_types ON contracts.contract_type = contract_types.contract_type_id" + 
-                "JOIN contract_beneficiaries ON contract_beneficiaries.id = contracts.contract_beneficiary_1" + 
-                "JOIN payment_periods ON payment_periods.period_id = contracts.contract_payment_period" + 
-                "JOIN contractors ON contractors.contractor_id = contracts.contractor JOIN bankaccounts ON bankaccounts.account_id = contracts.bankaccount" + 
+                "contract_next_cancellation_date FROM contracts JOIN contract_types ON contracts.contract_type = contract_types.contract_type_id " + 
+                "JOIN contract_beneficiaries ON contract_beneficiaries.id = contracts.contract_beneficiary_1 " + 
+                "JOIN payment_periods ON payment_periods.period_id = contracts.contract_payment_period " + 
+                "JOIN contractors ON contractors.contractor_id = contracts.contractor JOIN bankaccounts ON bankaccounts.account_id = contracts.bankaccount " + 
                 "WHERE contracts.contract_id = '"+str(id)+"'")
     result = cur.fetchone()
     return result
@@ -123,7 +123,7 @@ def getContractById(id):
 @queryWrapper
 def saveContract(data):
     try: cur.execute("INSERT INTO contracts(user_id, contract_type, contract_beneficiary_1, contractor, contract_fee, contract_payment_period, bankaccount, notice_period_months," + 
-                "contract_start, contract_end, contract_next_cancellation_date, contract_renewal_period_months)" + 
+                "contract_start, contract_end, contract_next_cancellation_date, contract_renewal_period_months) " + 
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (data['userid'],
                                                                 data['type'],
                                                                 data['beneficiary'],
