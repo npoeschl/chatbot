@@ -163,7 +163,7 @@ async def showcontract(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     categories = contract_dbqueries.getActiveContractCategories()
     for c in categories:
         keyboard.append([InlineKeyboardButton(c[1], callback_data=c[0])])
-    keyboard.append([InlineKeyboardButton("\U0001F519 zurück", callback_data="back")])
+    keyboard.append([InlineKeyboardButton("\U00021A9 zurück", callback_data="back")])
     reply_markup = InlineKeyboardMarkup(keyboard)
     await query.edit_message_text("Ich kann dich über deine laufenden Verträge informieren. Folgende Kategorien von Verträgen gibt es:", reply_markup=reply_markup)
     return CATEGORY
