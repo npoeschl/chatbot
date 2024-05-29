@@ -280,7 +280,7 @@ async def type(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         return START
 
     for t in contracts:
-        buttonlabel = str(t[17]) + " bei " + str(t[20])
+        buttonlabel = str(t[18]) + " bei " + str(t[21])
         keyboard.append([InlineKeyboardButton(buttonlabel, callback_data=t[0])])
     reply_markup = InlineKeyboardMarkup(keyboard)
     await query.edit_message_text(
