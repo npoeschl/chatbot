@@ -436,6 +436,8 @@ async def contract(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     keyboard.append([InlineKeyboardButton("Vertrag löschen", callback_data="delete-"+str(answer))])
     
     contract = contract_dbqueries.getContractById(int(answer))
+    for items in contract:
+            print(items)
     today = datetime.now().date()
     canceldate = contract[7]
     delta =  canceldate - today
