@@ -281,7 +281,7 @@ async def type(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
     for t in contracts:
         buttonlabel = str(t[18]) + " bei " + str(t[21])
-        keyboard.append([InlineKeyboardButton(buttonlabel, callback_data=t[0])])
+        keyboard.append([InlineKeyboardButton(buttonlabel, callback_data=t[1])])
     reply_markup = InlineKeyboardMarkup(keyboard)
     await query.edit_message_text(
         text="Folgende Verträge habe ich gefunden:", reply_markup=reply_markup
