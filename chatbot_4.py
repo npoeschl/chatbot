@@ -71,7 +71,7 @@ async def startAlerts(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     #print(str(update.message.from_user.id))
-    if not (contract_dbqueries.isValidUser(update.message.from_user.id)):
+    if not (contract_dbqueries.isValidUser(context._user_id)):
         await update.message.reply_text("Sorry, du bist nicht berechtigt!")
         return ConversationHandler.END
         
