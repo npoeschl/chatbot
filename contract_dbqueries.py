@@ -28,7 +28,7 @@ def getSQLCursor(conn):
     cur = conn.cursor()
     return cur
 
-@queryWrapper()
+@queryWrapper
 def isValidUser(userId):
     cur.execute("SELECT 1 FROM users WHERE user_id = '"+str(userId)+"'")
     result = cur.fetchall()
