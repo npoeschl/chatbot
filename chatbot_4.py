@@ -190,6 +190,7 @@ async def category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
     await query.answer()
     answer = query.data
+    print("Kategorie: "+answer)
     keyboard = []
     types = []
     types = contract_dbqueries.getContractTypes(answer)

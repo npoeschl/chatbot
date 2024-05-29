@@ -69,6 +69,7 @@ def getContractTypes(category):
                 "JOIN contract_categories ON contract_types.contract_category = contract_categories.contract_category_id " + 
                 "WHERE contract_categories.contract_category_id = '"+category+"'")
     result = cur.fetchall()
+    print("SQL result: "+result)
     return result
 
 @queryWrapper
