@@ -194,7 +194,7 @@ async def category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     keyboard = []
     types = []
     types = contract_dbqueries.getContractTypes(answer)
-    print("Vertragsarten": +types)
+    print("Vertragsarten:" +types)
     
     for t in types:
         keyboard.append([InlineKeyboardButton(t[1], callback_data=t[0])])
