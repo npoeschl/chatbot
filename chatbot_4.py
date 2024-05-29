@@ -172,7 +172,7 @@ async def startover(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     categories = contract_dbqueries.getActiveContractCategories()
     for c in categories:
         keyboard.append([InlineKeyboardButton(c[1], callback_data=c[0])])
-    
+    keyboard.append([InlineKeyboardButton("zurück", callback_data="back")])
     reply_markup = InlineKeyboardMarkup(keyboard)
     # Send message with text and appended InlineKeyboard
     await query.edit_message_text("Folgende Kategorien habe ich gefunden:", reply_markup=reply_markup)
