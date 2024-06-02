@@ -376,6 +376,7 @@ async def setfee(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 async def setfeeAgain(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """given format of fee was not valid"""
     await update.effective_user.send_chat_action("typing")
+    await time.sleep(3)
     await update.message.reply_text(
             text="Das verstehe ich leider nicht \U00002639."
         )
