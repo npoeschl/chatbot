@@ -165,7 +165,7 @@ def updateContractDates(data):
     cur.execute(executestring)
 
 @queryWrapper
-def setContractAlertingStatus(contractId: int, alertingStatus: bool):
+def setContractAlertingStatus(contractId: int, alertingStatus: int):
     """Set Alertings Status of contract to 1 or 0"""
     try: cur.execute("UPDATE contracts SET alert_active = '"+alertingStatus+"' WHERE contract_id = '"+contractId+"'")
     except mysql.connector.Error as e:
