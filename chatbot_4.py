@@ -12,6 +12,8 @@ Send /start to initiate the conversation.
 Press Ctrl-C on the command line to stop the bot.
 """
 import logging
+import re
+from enum import Enum
 from datetime import datetime, time
 from dateutil.relativedelta import relativedelta
 import contract_dbqueries
@@ -45,6 +47,21 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
 )
 logger = logging.getLogger(__name__)
+
+# User Input Types
+class UserInputType(Enum):
+    DATE = 1
+    MONETARY = 2
+    AMOUNT = 3
+
+
+# Mapping of UserInputType and RegEx to check
+userInputRegexMap = {
+    UserInputType.DATE : "^\d{2}\.\d{2}\.\d{4}$",
+    UserInputType.MONETARY : "^\d+,\d{2}$",
+    UserInputType.AMOUNT : "^\d+$"
+}
+
 
 # Stages
 START, STARTALERTS, CHOOSE, CATEGORY, TYPE, CONTRACT, DETAILS, NEWCONTRACT, SETCATEGORY, SETRENEWALPERIOD, SETTYPE, SETBENEFICIARY, SETPERIOD, SETCONTRACTOR, SETSTARTDATE, SETENDDATE, SETNOTICEPERIOD, SETFEE, SETACCOUNT, SAVECONTRACT, REALLYDELETE, NEWCATEGORY, NEWTYPE = range(23)
@@ -333,26 +350,29 @@ async def setcontractor(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
     context.user_data["contractor"] = answer
     
     await query.edit_message_text(
-        text="Wie hoch sind die Kosten? Z.B. 12.99 (2 Dezimalstellen mit .)"
+        text="Wie hoch sind die Kosten in €? Z.B. 12,99 (2 Dezimalstellen mit ,)"
     )
     return SETFEE
 
 async def setfee(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Kosten wurden gesetzt.Setze nun Zahlungsturnus"""
-    
     message = update.message
-    context.user_data["fee"] = message.text
-    keyboard = []
-    periods = []
-    periods = contract_dbqueries.getPeriods()
-    for t in periods:
-        buttonlabel = str(t[0])
-        keyboard.append([InlineKeyboardButton(buttonlabel, callback_data=t[1])])
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text(
-        text="In welchem Turnus bezahlst du?", reply_markup=reply_markup
-    )
-    return SETACCOUNT
+    if (not validateUserInput(message.text, UserInputType.MONETARY)):
+        await update.message.reply_text(text="Diese Eingabe verstehe ich nicht.")
+        return SETFEE
+    else:
+        context.user_data["fee"] = message.text
+        keyboard = []
+        periods = []
+        periods = contract_dbqueries.getPeriods()
+        for t in periods:
+            buttonlabel = str(t[0])
+            keyboard.append([InlineKeyboardButton(buttonlabel, callback_data=t[1])])
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await update.message.reply_text(
+            text="In welchem Turnus bezahlst du?", reply_markup=reply_markup
+        )
+        return SETACCOUNT
 
 async def setaccount(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Zahlungsturnus wurde gesetzt.Setze nun Kontoverbindung"""
@@ -526,9 +546,14 @@ async def sendAlert(context: ContextTypes.DEFAULT_TYPE) -> None:
             await context.bot.send_message(job.chat_id, parse_mode= 'Markdown', text=f"Dies ist eine Erinnerung!\nDein Vertrag: *"+str(c[17])+"* bei "+str(c[20])+" verlängert sich in "+str(delta.days)+" Tag(en) automatisch um "+str(c[15])+" Monat(e).\nVergiss nicht, zu kündigen!")
 
     
-
-
-
+async def validateUserInput(input: str, inputType : UserInputType) -> bool:
+    """validate user input based on input type provided."""
+    regEx = userInputRegexMap[inputType]
+    matches = re.findall(regEx, input)
+    if (len(matches)> 0):
+        return True
+    else:
+        return False
 
 
 def main() -> None:
