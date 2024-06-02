@@ -127,7 +127,7 @@ def saveContract(data):
 
     try: cur.execute("INSERT INTO contracts(user_id, contract_type, contract_beneficiary_1, contractor, contract_fee, contract_payment_period, bankaccount, notice_period_months," + 
                 "contract_start, contract_end, contract_next_cancellation_date, contract_renewal_period_months) " + 
-                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s); SELECT LAST_INSERT_ID();", (data['userid'],
+                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);", (data['userid'],
                                                                 data['type'],
                                                                 data['beneficiary'],
                                                                 data['contractor'],
@@ -142,6 +142,7 @@ def saveContract(data):
     
     except mysql.connector.Error as e:
         print(f"Error while inserting contract: {e}") 
+    cur.execute("SELECT LAST_INSERT_ID()")
     result = cur.fetchone()
     return result
 
