@@ -359,7 +359,7 @@ async def setfee(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     message = update.message
     print("input: "+message.text)
     print("regEx: "+ userInputRegexMap[UserInputType.MONETARY])
-    if (not validateUserInput(message.text, UserInputType.MONETARY)):
+    if (not await validateUserInput(message.text, UserInputType.MONETARY)):
         await update.message.reply_text(text="Diese Eingabe verstehe ich nicht.")
         return SETFEE
     else:
