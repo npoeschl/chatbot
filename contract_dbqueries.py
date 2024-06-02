@@ -127,7 +127,7 @@ def saveContract(data):
 
     try: cur.execute("INSERT INTO contracts(user_id, contract_type, contract_beneficiary_1, contractor, contract_fee, contract_payment_period, bankaccount, notice_period_months," + 
                 "contract_start, contract_end, contract_next_cancellation_date, contract_renewal_period_months) " + 
-                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (data['userid'],
+                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) SELECT LAST_INSERT_ID();", (data['userid'],
                                                                 data['type'],
                                                                 data['beneficiary'],
                                                                 data['contractor'],
@@ -139,9 +139,11 @@ def saveContract(data):
                                                                 data['enddate'],
                                                                 data['nextcancellationdate'],
                                                                 data['renewalperiod']))
+    
     except mysql.connector.Error as e:
         print(f"Error while inserting contract: {e}") 
-
+    result = cur.fetchone()
+    return result
 
 @queryWrapper
 def newCategory(categoryName):
@@ -161,3 +163,12 @@ def newType(categoryID, typeName):
 def updateContractDates(data):
     executestring = "UPDATE contracts SET contract_end = '"+data[1]+"', contract_next_cancellation_date = '"+data[2]+"' WHERE contract_id = " +str(data[0])+" "
     cur.execute(executestring)
+
+@queryWrapper
+def setContractAlertingStatus(contractId: int, alertingStatus: bool):
+    """Set Alertings Status of contract to 1 or 0"""
+    try: cur.execute("UPDATE contracts SET alert_active = '"+alertingStatus+"' WHERE contract_id = '"+contractId+"'")
+    except mysql.connector.Error as e:
+        print("Something went wrong while updating the alerting status of the contract: {}".format(e))
+    result = cur.fetchone()   
+    return result

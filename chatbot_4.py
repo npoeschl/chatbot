@@ -64,7 +64,7 @@ userInputRegexMap = {
 
 
 # Stages
-START, STARTALERTS, CHOOSE, CATEGORY, TYPE, CONTRACT, DETAILS, NEWCONTRACT, SETCATEGORY, SETRENEWALPERIOD, SETTYPE, SETBENEFICIARY, SETPERIOD, SETCONTRACTOR, SETSTARTDATE, SETENDDATE, SETNOTICEPERIOD, SETFEE, SETACCOUNT, SAVECONTRACT, REALLYDELETE, NEWCATEGORY, NEWTYPE = range(23)
+START, STARTALERTS, CHOOSE, CATEGORY, TYPE, CONTRACT, DETAILS, NEWCONTRACT, SETCATEGORY, SETRENEWALPERIOD, SETTYPE, SETBENEFICIARY, SETPERIOD, SETCONTRACTOR, SETSTARTDATE, SETENDDATE, SETNOTICEPERIOD, SETFEE, SETACCOUNT, SAVECONTRACT, REALLYDELETE, NEWCATEGORY, NEWTYPE, CONTRACT_ALERTING = range(24)
    
 
 async def startAlerts(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -188,19 +188,17 @@ async def showcontract(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
 
 async def startover(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
-    # CallbackQueries need to be answered, even if no notification to the user is needed
-    # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
     await query.answer()
     keyboard = []
     categories = []
     categories = contract_dbqueries.getActiveContractCategories()
+
     for c in categories:
         keyboard.append([InlineKeyboardButton(c[1], callback_data=c[0])])
     keyboard.append([InlineKeyboardButton("zurück", callback_data="back")])
     reply_markup = InlineKeyboardMarkup(keyboard)
-    # Send message with text and appended InlineKeyboard
+
     await query.edit_message_text("Folgende Kategorien habe ich gefunden:", reply_markup=reply_markup)
-    # Tell ConversationHandler that we're in state `FIRST` now
     return CATEGORY
 
 async def category(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -432,7 +430,7 @@ async def setstartdate(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     context.user_data["renewalperiod"] = message.text
     
     await update.message.reply_text(
-        text="Wann war/ist der Beginn des Vertrags? z-.B. 2021-12-01"
+        text="Wann war/ist der Beginn des Vertrags? z.B. 01.01.2024"
     )
     return SETENDDATE
 
@@ -440,7 +438,7 @@ async def setenddate(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     message = update.message
     context.user_data["startdate"] = message.text
     await update.message.reply_text(
-        text="Wann ist das Ende des Vertrags? z.B. 2022-12-31"
+        text="Wann ist das Ende des Vertrags? z.B. 31.12.2024"
     )
     return SAVECONTRACT
 
@@ -451,10 +449,34 @@ async def savecontract(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     nextcanceldate = enddate - relativedelta(months=+int(context.user_data["noticeperiod"])) 
     context.user_data["nextcancellationdate"] = nextcanceldate
     context.user_data["userid"] = context._user_id
-    contract_dbqueries.saveContract(context.user_data)
+    newContract = contract_dbqueries.saveContract(context.user_data)
+    context.user_data["last_inserted_contract"] = newContract
+
+    keyboard = []
+    keyboard.append([InlineKeyboardButton("ja", callback_data="activate_alerting")])
+    keyboard.append([InlineKeyboardButton("nein", callback_data="end_conversation")])
+    reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_text(
-        text="Danke, ich lege den Vertrag an. Mach's gut!"
+        text="Möchtest du den Vertragswecker für diesen Vertrag aktivieren?", reply_markup=reply_markup
     )
+
+    return CONTRACT_ALERTING
+
+async def activateContractAlerting(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    query = update.callback_query
+    await query.answer()
+    
+    if (query == "activate_alerting"):
+        contract_dbqueries.setContractAlertingStatus(context.user_data["last_inserted_contract"], True)
+        await update.message.reply_text(
+            text="Super, der Vertragswecker wurde aktiviert. Du wirst rechtzeitig von mir informiert, sobald dein Vertrag ausläuft."
+        )
+    
+    else:
+        await update.message.reply_text(
+            text="Alles klar, bis später \U0001F44B."
+        )
+
     return ConversationHandler.END
 
 async def contract(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -646,6 +668,9 @@ def main() -> None:
             ],
             REALLYDELETE: [
                 CallbackQueryHandler(reallyDeleteContract, pattern="^.+$")
+            ],
+            CONTRACT_ALERTING: [
+                CallbackQueryHandler(activateContractAlerting, pattern="^.+$")
             ],
             DETAILS: [
                 CallbackQueryHandler(end, pattern="^end$"),
