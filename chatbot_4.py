@@ -361,7 +361,7 @@ async def setfee(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     print("regEx: "+ userInputRegexMap[UserInputType.MONETARY])
     if (not await validateUserInput(message.text, UserInputType.MONETARY)):
         await update.message.reply_text(text="Diese Eingabe verstehe ich nicht.")
-        return SETFEE
+        return SETCONTRACTOR
     else:
         context.user_data["fee"] = message.text
         keyboard = []
