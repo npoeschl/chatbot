@@ -127,7 +127,7 @@ def saveContract(data):
 
     try: cur.execute("INSERT INTO contracts(user_id, contract_type, contract_beneficiary_1, contractor, contract_fee, contract_payment_period, bankaccount, notice_period_months," + 
                 "contract_start, contract_end, contract_next_cancellation_date, contract_renewal_period_months) " + 
-                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) SELECT LAST_INSERT_ID();", (data['userid'],
+                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s); SELECT LAST_INSERT_ID();", (data['userid'],
                                                                 data['type'],
                                                                 data['beneficiary'],
                                                                 data['contractor'],
@@ -170,5 +170,3 @@ def setContractAlertingStatus(contractId: int, alertingStatus: bool):
     try: cur.execute("UPDATE contracts SET alert_active = '"+alertingStatus+"' WHERE contract_id = '"+contractId+"'")
     except mysql.connector.Error as e:
         print("Something went wrong while updating the alerting status of the contract: {}".format(e))
-    result = cur.fetchone()   
-    return result
