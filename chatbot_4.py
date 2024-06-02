@@ -464,10 +464,9 @@ async def savecontract(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
 
 async def activateContractAlerting(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
-    print("query ist: "+query)
     await query.answer()
     
-    if (query == "activate_alerting"):
+    if (query.data == "activate_alerting"):
         contract_dbqueries.setContractAlertingStatus(context.user_data["last_inserted_contract"], True)
         await query.edit_message_text(
             text="Super, der Vertragswecker wurde aktiviert. Du wirst rechtzeitig von mir informiert, sobald dein Vertrag ausläuft."
