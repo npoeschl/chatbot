@@ -58,7 +58,7 @@ class UserInputType(Enum):
 # Mapping of UserInputType and RegEx to check
 userInputRegexMap = {
     UserInputType.DATE : "^\d{2}\.\d{2}\.\d{4}$",
-    UserInputType.MONETARY : "^\d+,\d{2}$",
+    UserInputType.MONETARY : "^(\d+,\d{2}|\d+)$",
     UserInputType.AMOUNT : "^\d+$"
 }
 
@@ -375,11 +375,12 @@ async def setfee(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 
 async def setfeeAgain(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """given format of fee was not valid"""
+    await update.effective_chat.send_chat_action(action="typing")
     await update.message.reply_text(
             text="Das verstehe ich leider nicht \U00002639."
         )
     await update.message.reply_text(
-            text="Bitte gib die Kosten für den Vertrag in € an. Nutze dafür ein Komma und zwei Dezimalstellen, z.B.: 12,99"
+            text="Bitte gib die Kosten für den Vertrag in € an. Falls nötig, nutze dafür ein Komma und zwei Dezimalstellen, z.B.: 12,99"
         )
     return SETFEE
 
