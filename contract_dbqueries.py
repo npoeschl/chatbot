@@ -167,6 +167,6 @@ def updateContractDates(data):
 @queryWrapper
 def setContractAlertingStatus(contractId: int, alertingStatus: int):
     """Set Alertings Status of contract to 1 or 0"""
-    try: cur.execute("UPDATE contracts SET alert_active = '"+alertingStatus+"' WHERE contract_id = '"+contractId+"'")
+    try: cur.execute("UPDATE contracts SET alert_active = '"+str(alertingStatus)+"' WHERE contract_id = '"+str(contractId)+"'")
     except mysql.connector.Error as e:
         print("Something went wrong while updating the alerting status of the contract: {}".format(e))
