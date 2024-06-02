@@ -468,12 +468,12 @@ async def activateContractAlerting(update: Update, context: ContextTypes.DEFAULT
     
     if (query == "activate_alerting"):
         contract_dbqueries.setContractAlertingStatus(context.user_data["last_inserted_contract"], True)
-        await update.message.reply_text(
+        await query.edit_message_text(
             text="Super, der Vertragswecker wurde aktiviert. Du wirst rechtzeitig von mir informiert, sobald dein Vertrag ausläuft."
         )
     
     else:
-        await update.message.reply_text(
+        await query.edit_message_text(
             text="Alles klar, bis später \U0001F44B."
         )
 
