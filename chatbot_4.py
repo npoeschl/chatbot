@@ -344,21 +344,24 @@ async def setbeneficiary(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
 async def setcontractor(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Anbieter wurde ausgewählt.Setze nun Kosten"""
-    query = update.callback_query
-    await query.answer()
-    answer = query.data
-    context.user_data["contractor"] = answer
-    
-    await query.edit_message_text(
-        text="Wie hoch sind die Kosten in €? Z.B. 12,99 (2 Dezimalstellen mit ,)"
-    )
-    return SETFEE
+    if (update.callback_query):
+        query = update.callback_query
+        await query.answer()
+        answer = query.data
+        context.user_data["contractor"] = answer
+        
+        await query.edit_message_text(
+            text="Wie hoch sind die Kosten in €? Z.B. 12,99 (2 Dezimalstellen mit ,)"
+        )
+        return SETFEE
+    else:
+        message = update.message
+        await update.message.reply_text(text="Wie hoch sind die Kosten in €? Z.B. 12,99 (2 Dezimalstellen mit ,)")
+        return SETFEE
 
 async def setfee(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Kosten wurden gesetzt.Setze nun Zahlungsturnus"""
     message = update.message
-    print("input: "+message.text)
-    print("regEx: "+ userInputRegexMap[UserInputType.MONETARY])
     if (not await validateUserInput(message.text, UserInputType.MONETARY)):
         await update.message.reply_text(text="Diese Eingabe verstehe ich nicht.")
         return SETCONTRACTOR
