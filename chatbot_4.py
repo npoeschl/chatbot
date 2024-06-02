@@ -464,6 +464,7 @@ async def savecontract(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
 
 async def activateContractAlerting(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
+    print("query ist: "+query)
     await query.answer()
     
     if (query == "activate_alerting"):
