@@ -344,40 +344,42 @@ async def setbeneficiary(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
 async def setcontractor(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Anbieter wurde ausgewählt.Setze nun Kosten"""
-    if (update.callback_query):
-        query = update.callback_query
-        await query.answer()
-        answer = query.data
-        context.user_data["contractor"] = answer
-        
-        await query.edit_message_text(
-            text="Wie hoch sind die Kosten in €? Z.B. 12,99 (2 Dezimalstellen mit ,)"
-        )
-        return SETFEE
-    else:
-        message = update.message
-        await update.message.reply_text(text="Wie hoch sind die Kosten in €? Z.B. 12,99 (2 Dezimalstellen mit ,)")
-        return SETFEE
+    update.callback_query
+    query = update.callback_query
+    await query.answer()
+    answer = query.data
+    context.user_data["contractor"] = answer
+    
+    await query.edit_message_text(
+        text="Wie hoch sind die Kosten in €? Z.B. 12,99 (2 Dezimalstellen mit ,)"
+    )
+    return SETFEE
+
 
 async def setfee(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Kosten wurden gesetzt.Setze nun Zahlungsturnus"""
     message = update.message
-    if (not await validateUserInput(message.text, UserInputType.MONETARY)):
-        await update.message.reply_text(text="Diese Eingabe verstehe ich nicht.")
-        return SETCONTRACTOR
-    else:
-        context.user_data["fee"] = message.text
-        keyboard = []
-        periods = []
-        periods = contract_dbqueries.getPeriods()
-        for t in periods:
-            buttonlabel = str(t[0])
-            keyboard.append([InlineKeyboardButton(buttonlabel, callback_data=t[1])])
-        reply_markup = InlineKeyboardMarkup(keyboard)
-        await update.message.reply_text(
-            text="In welchem Turnus bezahlst du?", reply_markup=reply_markup
+   
+    context.user_data["fee"] = message.text
+    keyboard = []
+    periods = []
+    periods = contract_dbqueries.getPeriods()
+    for t in periods:
+        buttonlabel = str(t[0])
+        keyboard.append([InlineKeyboardButton(buttonlabel, callback_data=t[1])])
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    await update.message.reply_text(
+        text="In welchem Turnus bezahlst du?", reply_markup=reply_markup
+    )
+    return SETACCOUNT
+
+async def setfeeAgain(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    """given format of fee was not valid"""
+    message = update.message
+    await update.message.reply_text(
+            text="Wie hoch sind die Kosten in €? Z.B. 12,99 (2 Dezimalstellen mit ,)"
         )
-        return SETACCOUNT
+    return SETFEE
 
 async def setaccount(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Zahlungsturnus wurde gesetzt.Setze nun Kontoverbindung"""
@@ -565,12 +567,7 @@ def main() -> None:
     """Run the bot."""
     # Create the Application and pass it your bot's token.
     application = Application.builder().token("5639687161:AAFg8NO8kOcHQmFODEKA8SZSshQv4fiqQHg").build()
-    #create updater and job queue
-   # u = Updater('5639687161:AAFg8NO8kOcHQmFODEKA8SZSshQv4fiqQHg')
-    #j = u.job_queue
-
-    # Setup conversation handler with the states FIRST and SECOND
-    # Use the pattern parameter to pass CallbackQueries with specific
+  
     conv_handler = ConversationHandler(
         entry_points=
             [CommandHandler("start", start)],
@@ -619,7 +616,8 @@ def main() -> None:
                 MessageHandler(filters.Regex("^$"), setfee)
             ],
             SETFEE: [
-                MessageHandler(filters.Regex("^.+$"), setfee)
+                MessageHandler(filters.Regex(userInputRegexMap[UserInputType.MONETARY]), setfee),
+                MessageHandler(filters.Regex("^.+$"), setfeeAgain)
             ],
             SETNOTICEPERIOD: [
                 CallbackQueryHandler(setnoticeperiod, pattern="^.+$")
