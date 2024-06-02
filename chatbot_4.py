@@ -615,7 +615,7 @@ def main() -> None:
                 CallbackQueryHandler(setcontractor, pattern="^.+$")
             ],
             SETFEE: [
-                MessageHandler(filters.Regex("^\d*\.?\d{0,2}$"), setfee)
+                MessageHandler(filters.Regex("^.+$"), setfee)
             ],
             SETNOTICEPERIOD: [
                 CallbackQueryHandler(setnoticeperiod, pattern="^.+$")
