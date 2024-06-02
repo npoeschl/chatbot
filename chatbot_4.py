@@ -615,7 +615,8 @@ def main() -> None:
                 CallbackQueryHandler(setbeneficiary, pattern="^.+$")
             ],
             SETCONTRACTOR: [
-                CallbackQueryHandler(setcontractor, pattern="^.+$")
+                CallbackQueryHandler(setcontractor, pattern="^.+$"),
+                MessageHandler(filters.Regex("^.*$"), setfee)
             ],
             SETFEE: [
                 MessageHandler(filters.Regex("^.+$"), setfee)
