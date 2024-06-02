@@ -357,6 +357,8 @@ async def setcontractor(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
 async def setfee(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Kosten wurden gesetzt.Setze nun Zahlungsturnus"""
     message = update.message
+    print("input: "+message)
+    print("regEx: "+ userInputRegexMap(UserInputType.MONETARY))
     if (not validateUserInput(message.text, UserInputType.MONETARY)):
         await update.message.reply_text(text="Diese Eingabe verstehe ich nicht.")
         return SETFEE
