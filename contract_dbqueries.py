@@ -122,10 +122,8 @@ def getContractById(id):
 
 @queryWrapper
 def saveContract(data):
-    for x in data:
-        print (x)
-        for y in data[x]:
-            print (y,':',data[x][y])
+    for key, value in data.items():
+        print(key, ":", value)
 
     try: cur.execute("INSERT INTO contracts(user_id, contract_type, contract_beneficiary_1, contractor, contract_fee, contract_payment_period, bankaccount, notice_period_months," + 
                 "contract_start, contract_end, contract_next_cancellation_date, contract_renewal_period_months) " + 
