@@ -65,6 +65,7 @@ userInputRegexMap = {
 
 # Stages
 START, STARTALERTS, CHOOSE, CATEGORY, TYPE, CONTRACT, DETAILS, NEWCONTRACT, SETCATEGORY, SETRENEWALPERIOD, SETTYPE, SETBENEFICIARY, SETPERIOD, SETCONTRACTOR, SETSTARTDATE, SETENDDATE, SETNOTICEPERIOD, SETFEE, SETACCOUNT, SAVECONTRACT, REALLYDELETE, NEWCATEGORY, NEWTYPE = range(23)
+   
 
 async def startAlerts(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
@@ -376,7 +377,6 @@ async def setfee(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 async def setfeeAgain(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """given format of fee was not valid"""
     await update.effective_user.send_chat_action("typing")
-    await time.sleep(3)
     await update.message.reply_text(
             text="Das verstehe ich leider nicht \U00002639."
         )
