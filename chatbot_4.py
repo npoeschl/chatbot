@@ -377,6 +377,9 @@ async def setfeeAgain(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int
     """given format of fee was not valid"""
     message = update.message
     await update.message.reply_text(
+            text="Das verstehe ich leider nicht."
+        )
+    await update.message.reply_text(
             text="Wie hoch sind die Kosten in €? Z.B. 12,99 (2 Dezimalstellen mit ,)"
         )
     return SETFEE
