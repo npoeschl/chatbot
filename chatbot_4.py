@@ -449,7 +449,7 @@ async def savecontract(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     nextcanceldate = enddate - relativedelta(months=+int(context.user_data["noticeperiod"])) 
     context.user_data["nextcancellationdate"] = nextcanceldate
     context.user_data["userid"] = context._user_id
-    newContract = contract_dbqueries.saveContract(context.user_data)
+    newContract = contract_dbqueries.saveContract(context.user_data[0])
     context.user_data["last_inserted_contract"] = newContract
 
     keyboard = []
