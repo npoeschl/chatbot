@@ -57,7 +57,7 @@ class UserInputType(Enum):
 
 # Mapping of UserInputType and RegEx to check
 userInputRegexMap = {
-    UserInputType.DATE : "^\d{2}\.\d{2}\.\d{4}$",
+    UserInputType.DATE : "^(\d{2})\.(\d{2})\.(\d{4})$",
     UserInputType.MONETARY : "^(\d+,\d{2}|\d+)$",
     UserInputType.AMOUNT : "^\d+$"
 }
@@ -66,6 +66,14 @@ userInputRegexMap = {
 # Stages
 START, STARTALERTS, CHOOSE, CATEGORY, TYPE, CONTRACT, DETAILS, NEWCONTRACT, SETCATEGORY, SETRENEWALPERIOD, SETTYPE, SETBENEFICIARY, SETPERIOD, SETCONTRACTOR, SETSTARTDATE, SETENDDATE, SETNOTICEPERIOD, SETFEE, SETACCOUNT, SAVECONTRACT, REALLYDELETE, NEWCATEGORY, NEWTYPE, CONTRACT_ALERTING = range(24)
    
+async def makeValidDateString(inputDate: str) -> str:
+    """transforms a date input string into a valid date that can be saved in the database, e.g. 2024-12-31"""
+    validDateString = inputDate
+    regEx = userInputRegexMap[UserInputType.DATE]
+    matches = re.search(regEx, inputDate)
+    if (len(matches)> 0):
+        validDateString = matches.group(3)+"-"+matches.group(2)+"-"+matches.group(1)
+    return validDateString
 
 async def startAlerts(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
@@ -436,7 +444,7 @@ async def setstartdate(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
 
 async def setEndDate(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     message = update.message
-    context.user_data["startdate"] = message.text
+    context.user_data["startdate"] = makeValidDateString(message.text)
     await update.message.reply_text(
         text="Wann ist das Ende des Vertrags? z.B. 31.12.2024"
     )
@@ -450,7 +458,7 @@ async def setEndDateAgain(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
 async def saveContract(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     message = update.message
-    context.user_data["enddate"] = message.text
+    context.user_data["enddate"] = makeValidDateString(message.text)
     enddate = datetime.strptime(context.user_data["enddate"], '%Y-%m-%d').date()
     nextcanceldate = enddate - relativedelta(months=+int(context.user_data["noticeperiod"])) 
     context.user_data["nextcancellationdate"] = nextcanceldate
