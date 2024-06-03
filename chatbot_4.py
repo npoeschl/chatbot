@@ -452,7 +452,7 @@ async def savecontract(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     newContract = contract_dbqueries.saveContract(context.user_data)
     for x in newContract:
         print(x)
-    context.user_data["last_inserted_contract"] = newContract
+    context.user_data["last_inserted_contract"] = newContract[0]
 
     keyboard = []
     keyboard.append([InlineKeyboardButton("ja", callback_data="activate_alerting")])
