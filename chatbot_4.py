@@ -434,7 +434,7 @@ async def setstartdate(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     )
     return SETENDDATE
 
-async def setenddate(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def setEndDate(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     message = update.message
     context.user_data["startdate"] = message.text
     await update.message.reply_text(
@@ -442,7 +442,13 @@ async def setenddate(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     )
     return SAVECONTRACT
 
-async def savecontract(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+async def setEndDateAgain(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    await update.message.reply_text(
+        text="Diese Angabe verstehe ich leider nicht \U00002639. Bitte gib den Vertragsbeginn als Dataum an z.B. 31.12.2024"
+    )
+    return SETENDDATE
+
+async def saveContract(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     message = update.message
     context.user_data["enddate"] = message.text
     enddate = datetime.strptime(context.user_data["enddate"], '%Y-%m-%d').date()
@@ -463,6 +469,12 @@ async def savecontract(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     )
 
     return CONTRACT_ALERTING
+
+async def saveContractAgain(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
+    await update.message.reply_text(
+        text="Diese Angabe verstehe ich leider nicht \U00002639. Bitte gib das Vertragsende als Dataum an z.B. 31.12.2024"
+    )
+    SAVECONTRACT
 
 async def activateContractAlerting(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     query = update.callback_query
@@ -655,12 +667,17 @@ def main() -> None:
             ],
             SETSTARTDATE: [
                 MessageHandler(filters.Regex("^.+$"), setstartdate)
+
             ],
             SETENDDATE: [
-                MessageHandler(filters.Regex("^\d{4}-\d{2}-\d{2}$"), setenddate)
+                MessageHandler(filters.Regex("^\d{4}-\d{2}-\d{2}$"), setEndDate),
+                MessageHandler(filters.Regex("^\d{2}\.\d{2}\.\d{4}$"), setEndDate),
+                MessageHandler(filters.Regex("^.*$"), setEndDateAgain)
             ],
             SAVECONTRACT: [
-                MessageHandler(filters.Regex("^\d{4}-\d{2}-\d{2}$"), savecontract)
+                MessageHandler(filters.Regex("^\d{4}-\d{2}-\d{2}$"), saveContract),
+                MessageHandler(filters.Regex("^\d{2}\.\d{2}\.\d{4}$"), saveContract),
+                MessageHandler(filters.Regex("^.*$"), saveContractAgain)
             ],
             SETACCOUNT: [
                 CallbackQueryHandler(setaccount, pattern="^.+$")
