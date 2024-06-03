@@ -451,7 +451,7 @@ async def savecontract(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
     context.user_data["userid"] = context._user_id
     newContract = contract_dbqueries.saveContract(context.user_data)
     for x in newContract:
-        print(newContract[x])
+        print(x)
     context.user_data["last_inserted_contract"] = newContract
 
     keyboard = []

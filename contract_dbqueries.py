@@ -144,6 +144,7 @@ def saveContract(data):
         print(f"Error while inserting contract: {e}") 
     cur.execute("SELECT LAST_INSERT_ID()")
     result = cur.fetchone()
+
     return result
 
 @queryWrapper
